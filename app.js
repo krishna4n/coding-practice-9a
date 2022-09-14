@@ -68,11 +68,12 @@ app.put("/change-password", async (request, response) => {
   const { username, oldPassword, newPassword } = request.body;
   const getUserQuery = `select * from user where username = '${username}'`;
   const dbUser = await db.get(getUserQuery);
-  const cPasswordStatus = await bcrypt.compare(oldPassword, db.password);
-  if (cPasswordStatus == true) {
+
+  const oPasswordStatus = await bcrypt.compare(oldPassword, db.password);
+  if (oPasswordStatus == true) {
     if (newPassword.length > 5) {
       const hashPassword = await bcrypt.hash(newPassword, 10);
-      const passwordUpdateQuery = `update user set password = '${hashPassword} where username = '${username}''`;
+      const passwordUpdateQuery = `update user set password = '${hashPassword}' where username = '${username}'`;
       await db.run(passwordUpdateQuery);
       response.status(200);
       response.send("Password updated");
