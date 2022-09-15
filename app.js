@@ -68,7 +68,10 @@ app.put("/change-password", async (request, response) => {
   const { username, oldPassword, newPassword } = request.body;
   const getUserQuery = `select * from user where username = '${username}'`;
   const dbUser = await db.get(getUserQuery);
-
+  if (dbUser === undefined) {
+    response.status(400);
+    response.send("Invalid User");
+  } else {
   const oPasswordStatus = await bcrypt.compare(oldPassword, db.password);
   if (oPasswordStatus == true) {
     if (newPassword.length > 5) {
@@ -84,6 +87,7 @@ app.put("/change-password", async (request, response) => {
   } else {
     response.status(400);
     response.send("Invalid current password");
+  }
   }
 });
 
